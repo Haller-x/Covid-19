@@ -6,7 +6,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import pycountry
 import plotly.express as px
-##Adicionar pop up de erro 
+import tkinter.messagebox
+
 cvd19 = cvd.COVID19()
 latest =cvd19.getLatest()
 ratio = latest['deaths']/latest['confirmed']
@@ -20,10 +21,10 @@ canvas1.pack()
 label1 = tk.Label(root, text='COVID PLATFORM')
 label1.config(font=('helvetica', 14,'bold'))
 canvas1.create_window(200, 50, window=label1)
+
 label2 = tk.Label(root, text='TWO LETTERS CODE: ')
 label3 = tk.Label(root, text='CURRENT SITUATION:')
 label3.config(font=('helvetica', 12,'bold'))
-#
 label4 = tk.Label(root, text='Confirmed: {}\n'.format(confirmed_))
 label4.config(font=('helvetica', 10))
 label5 = tk.Label(root, text='Deaths: {}\n'.format(deaths_))
@@ -86,24 +87,35 @@ def cvd_consulting():
     'VE' : 'Venezuela (Bolivarian Republic of)','VG' : 'Virgin Islands (British)','VI' : 'Virgin Islands (U.S.)','VN' : 'Viet Nam',
     'VU' : 'Vanuatu','WF' : 'Wallis and Futuna','WS' : 'Samoa','YE' : 'Yemen','YT' : 'Mayotte','ZA' : 'South Africa','ZM' : 'Zambia'}
     country_code = entry1.get()
-    if country_code == "":
-        exit()
-    cvd19 = cvd.COVID19()
-    country  = cvd19.getLocationByCountryCode(country_code, timelines=True)
-    index = country[0]['timelines']['confirmed']
-    index = index['timeline'].keys()
-    confirm = country[0]['timelines']['confirmed']
-    confirm = confirm['timeline'].values()
-    deaths = country[0]['timelines']['deaths']
-    deaths = deaths['timeline'].values()
-    df = pd.DataFrame(data = {'confirmed': list(confirm),
-                                'deaths': list(deaths)},
-                                index = pd.to_datetime(list(index)))
-    df.plot(title='{} coronavirus victims - John Hopkins'.format(country_code_dict[country_code]),rot=30)
-    plt.xlabel('Days')
-    plt.ylabel('Cases')
-    plt.tight_layout()
-    plt.show()
+    def error_cc():
+        tkinter.messagebox.showerror('ERROR', 'Please insert a valid input')
+
+    def error_request():
+        tkinter.messagebox.showerror('ERROR', 'Request denied')
+    if country_code not in country_code_dict.keys() or country_code == '':
+        error_cc()
+    else:
+        try:
+
+            cvd19 = cvd.COVID19()
+            country  = cvd19.getLocationByCountryCode(country_code, timelines=True)
+            index = country[0]['timelines']['confirmed']
+            index = index['timeline'].keys()
+            confirm = country[0]['timelines']['confirmed']
+            confirm = confirm['timeline'].values()
+            deaths = country[0]['timelines']['deaths']
+            deaths = deaths['timeline'].values()
+
+            df = pd.DataFrame(data = {'confirmed': list(confirm),
+                                        'deaths': list(deaths)},
+                                        index = pd.to_datetime(list(index)))
+            df.plot(title='{} coronavirus victims - John Hopkins'.format(country_code_dict[country_code]),rot=30)
+            plt.xlabel('Days')
+            plt.ylabel('Cases')
+            plt.tight_layout()
+            plt.show()
+        except:
+            error_request()
 def consult_map():
     # ----------- Step 1 ------------
     URL_DATASET = r'https://raw.githubusercontent.com/datasets/covid-19/master/data/countries-aggregated.csv'
