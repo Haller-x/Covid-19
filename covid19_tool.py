@@ -15,7 +15,7 @@ confirmed_ = format(latest['confirmed'], ",")
 deaths_ = format(latest['deaths'], ",")
 
 root= tk.Tk()
-root.title('COVID CONSULTING PLATFORM - by Haller (GLA7)')
+root.title('COVID CONSULTING PLATFORM - by Haller-x (GLA7)')
 canvas1 = tk.Canvas(root, width = 400, height = 500,  relief = 'raised')
 canvas1.pack()
 label1 = tk.Label(root, text='COVID PLATFORM')
